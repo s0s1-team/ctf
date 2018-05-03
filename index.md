@@ -15,7 +15,7 @@ Tasks:
 1. Full Compromise
 1. Benzinegate
 1. Climate Controller Catastrophe
-1. Race of a Lifetime
+1. [Race of a Lifetime](rhme3/race_of_a_lifetime.md)
 1. Can Opener
 1. It's a Kind of Magic
 1. The Imposters

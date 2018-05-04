@@ -18,7 +18,7 @@ Tasks:
 1. Benzinegate
 1. Climate Controller Catastrophe
 1. [Race of a Lifetime](rhme3/race_of_a_lifetime.md)
-1. Car Key Fob Hardware Backdoor
+1. [Car Key Fob hardware backdoor](rhme3/car_key_fob_hardware.md)
 1. [Car Crash](rhme3/car_crash.md)
 1. [CAN Opener](rhme3/can_opener.md)
 1. Back to the Future

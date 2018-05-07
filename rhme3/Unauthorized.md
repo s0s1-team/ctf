@@ -47,4 +47,4 @@ with serial.Serial('/dev/ttyUSB0',115200,timeout=1) as tty:
     print tty.readline()
 ```
 
-So we send two command, with first on we overwrite stored hash and by second one we succeffuly pass authentication, we heve another one flag and can move on to next challange. You can find full script among files in github repository.
+So, we just send two command, first one overwrite stored hash and second one we succeffuly pass crafted authentication, we heve another one flag and can move on to next challange, full script can be found among files in github repository.

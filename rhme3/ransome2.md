@@ -2,7 +2,7 @@
 
 ### Description
 
-In theory, this firmware mod was supposed to give you 30% extra horsepower and torque. In reality, it's something different. For real this time.
+In theory, this firmware mod was supposed to give you 30% extra horsepower and torque. In reality, it's something different. For real this time. For real this time.
 
 ### Write-up
 

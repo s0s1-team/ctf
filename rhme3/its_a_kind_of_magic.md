@@ -6,17 +6,17 @@ The device expects 18 bytes of input: the first byte should be either 0xAE (for 
 
 ## Write-up
 
-The easiest side channel analysis challenge. After some [hardware setup](hw.md) and multiple configuration tries, we were able to get traces with Chipwhisperer. The first obstacle for us was all traces we out of sync.
+The easiest side channel analysis challenge. After some [hardware setup](hw.md) and multiple configuration tries, we were able to get traces with help of Chipwhisperer. The first obstacle for us was all traces were out of sync.
 
-The issue was unsychronized clocks on Xmega and Chipwhisperer. Unlike previous RHME this time chip was clocked using internal oscillator. But after poking around we found there was clock signal for one of CAN controller available. It's a pity that FI challenges didn't have clock available.
+The issue was unsynchronized clocks on Xmega and Chipwhisperer. Unlike previous RHME this time chip was clocked using internal oscillator. But after poking around we found there was a clock signal for one of CAN controller available. This allowed to synchronize Chipwhisperer with the board. It's a pity that FI challenges didn't have clock available.
 
 Chipwhisperer software was slightly patched to support the board. And traces acquisition question was closed.
 
 ![SCA1](images/itskindofmagic1.png)
 
-We assumed that masking was just XORing input with random mask (changed every boot). Such masking resembles on AES-CCM attack which was described in ["IoT Goes Nuclear: Creating a ZigBee Chain Reaction"](http://iotworm.eyalro.net) paper.
+We assumed that masking was just XORing input with random mask (changed every boot). Such masking resembles an attack on AES-CCM which is described in ["IoT Goes Nuclear: Creating a ZigBee Chain Reaction"](http://iotworm.eyalro.net) paper.
 
-Briefly, the attack could be split on 3 steps:
+Our plan for the attack consisted of 3 steps:
 1. Attack AES _SubBytes_ on the 1st round. Here we are able to get not real key but `round_1_key ^ mask`.
     ![SCA2](images/itskindofmagic2.png)
 

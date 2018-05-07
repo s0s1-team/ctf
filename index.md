@@ -6,10 +6,12 @@ RHme3 is the world’s first automotive CTF created together by Riscure and Argu
 
 One of our boards was [modified](rhme3/hw.md) for side channel analysis and fault injection tasks.
 
+There were a decent number of RE tasks and here some [RE hints](rhme3/rehints.md).
+
 Tasks:
 
-1. Ransom
-1. Ransom 2.0
+1. [Ransom](rhme3/ransome.md)
+1. [Ransom 2.0](rhme3/ransome2.md)
 1. Unauthorized
 1. Phonic Frenzy 1
 1. Phonic Frenzy 2

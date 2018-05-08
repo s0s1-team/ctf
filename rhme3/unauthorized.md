@@ -21,9 +21,9 @@ And among code in *malloc.c* we see one interesting comment:
 
 Really?
 
-The point is that diring input proccessing we can specify input size which is dynamiclly allocated on stack without any limitation, using this unsafe feature we can easily overlap stack and heap segments and overwrite stored data.
+The point is that during input processing we can specify input size which is dynamiclly allocated on stack without any limitation, using this unsafe feature we can easily overlap stack and heap segments and overwrite stored data.
 
-Next we should look how authentication is done, among functions code we can see quite known constants (**0x6A09E667**) which means that sha256 is used for password verification. All user hashes is allocated on heap and have constant position after startup, also we need to know is initial stack value , for this porpuse we can count stack frames from initial startup and pridict heap allocatr, but we no need to suffer, becase we can find all this using debugger, we used Atmel AVR Studio which is quite good for such tasks.
+Next we should look how authentication is done, among functions code we can see quite known constants (**0x6A09E667**) which means that SHA256 is used for password verification. All user hashes is allocated on heap and have constant position after startup, also we need to know is initial stack value , for this porpuse we can count stack frames from initial startup and pridict heap allocatr, but we no need to suffer, becase we can find all this using debugger, we used Atmel AVR Studio which is quite good for such tasks.
 
 ```python
 target_address=0x3023-0x22  #location of pass hash (backdoor user)

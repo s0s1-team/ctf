@@ -15,7 +15,7 @@ Tasks:
 1. [Race of a Lifetime](rhme3/race_of_a_lifetime.md)
 1. [Unauthorized](rhme3/unauthorized.md)
 1. [Bluetooth Device Manager](rhme3/bluetooth_manager.md)
-1. Phonic Frenzy 1
+1. [Phonic Frenzy 1](rhme3/phonic1.md)
 1. Phonic Frenzy 2
 1. [Car Crash](rhme3/car_crash.md)
 1. Full Compromise

@@ -6,15 +6,15 @@ You have a basic car model and would like to enable some extra features? That na
 
 ### Write-up
 
-Another one explotation challenge, "**such heap, much pr0!**" strings in data section give a little hint that heap explotation will be involved.
+Another one exploitation challenge, "**such heap, much pr0!**" strings in data section give a little hint that heap exploitation will be involved.
 
-Firmware implements simple menu with creating, editing and deleting of objects, which are dynamicly allocated on heap. If we will look closer to *"Modify stored device"* code you can notice that during rename new object isn't allocated. Instead previously allocated null terminated string is reused with previous size limit. When I played with inputs I noticed that we can overwrite string termination byte and one byte next after device name, which is *malloc* header of next chunk, things becomes more interesting.
+Firmware implements simple menu with creating, editing and deleting of objects, which are dynamically allocated on heap. If we will look closer to *"Modify stored device"* code you can notice that during rename new object isn't allocated. Instead previously allocated null terminated string is reused with previous size limit. When I played with inputs I noticed that we can overwrite string termination byte and one byte next after device name, which is *malloc* header of next chunk, things becomes more interesting.
 
 In [avr-libc](https://github.com/vancegroup-mirrors/avr-libc/blob/master/avr-libc/libc/stdlib/malloc.c) repository we can find how avr allocator is working, it's quite simple comparing to allocator for x86.
 
-Our goal here is to allocate structure with pointers to area that we can control and we can do it by manipulationg chunk sizes, as the result we will have write and read primitive.
+Our goal here is to allocate structure with pointers to area that we can control and we can do it by manipulating chunk sizes, as the result we will have write and read primitive.
 
-When we create new device 3 malloc call is invoked, one for device structure (0xb size) and two calls for *key* and *name* fields with variable size. Our strategy is to create two devices (*dev0* and *dev1*) with shortest *key* and *name* fields, then free *dev0* and create new *dev2* with *key* longer than previous, in that case *dev0* freed *key* chunk won't fit new longer *key* and new chunk will be allocated right next to *dev1* *key*. Next using "buggy" *modify* option we encrease size of *dev1* *key* chunk to 0xb (device structure size), as the result this chunk will overlap with *dev2* *key* chunk, which content can modified. Now we free *dev1* and create new *dev3*, as our prediction *dev3* struc will be allocated on crafted overlapped chunk, *name* and *key* pointer will at our control which gives us read and write primitive:
+When we create new device 3 malloc call is invoked, one for device structure (0xb size) and two calls for *key* and *name* fields with variable size. Our strategy is to create two devices (*dev0* and *dev1*) with shortest *key* and *name* fields, then free *dev0* and create new *dev2* with *key* longer than previous, in that case *dev0* freed *key* chunk won't fit new longer *key* and new chunk will be allocated right next to *dev1* *key*. Next using "buggy" *modify* option we increase size of *dev1* *key* chunk to 0xb (device structure size), as the result this chunk will overlap with *dev2* *key* chunk, which content can modified. Now we free *dev1* and create new *dev3*, as our prediction *dev3* struct will be allocated on crafted overlapped chunk, *name* and *key* pointer will at our control which gives us read and write primitive:
 
 ```python
     new_dev(tty,"a","b")             # dev 0
@@ -27,7 +27,7 @@ When we create new device 3 malloc call is invoked, one for device structure (0x
     new_dev(tty,"g","h")             # dev3 with overlapped chunk
 ```
 
-Few things left to get the flag, to make proper jump we need to know dynamic stack frame size for main function, luckly it's just stored at data section by 0x2192 address. Other thing is that we need to replace 0xDEADBEEF to 0xBAADF00D at 0x2000:
+Few things left to get the flag, to make proper jump we need to know dynamic stack frame size for main function, luckily it's just stored at data section by 0x2192 address. Other thing is that we need to replace 0xDEADBEEF to 0xBAADF00D at 0x2000:
 
 ```python
     edit_dev(tty,2,"x","\x01\x01\x01"+"\x01\x20") # set ptr to 0x2001
@@ -48,5 +48,5 @@ Few things left to get the flag, to make proper jump we need to know dynamic sta
     print edit_dev(tty,3,"g",struct.pack(">H",0x182)) # set return pointer to 0x182, big endian! - flag print
 ```
 
-After everithing is done properly you will be rewarded with next 200 points.
+After everything is done properly you will be rewarded with next 200 points.
 Full script can be found among files in github repository.

@@ -2,11 +2,11 @@
 
 ### Description
 
-In theory, this firmware mod was supposed to give you 30% extra horsepower and torque. In reality, it's something different. For real this time. For real this time.
+In theory, this firmware mod was supposed to give you 30% extra horsepower and torque. In reality, it's something different. For real this time.
 
 ### Write-up
 
-As it was expected in this challange comparison function was fixed, and this time we will have to look throug unlock code generation.
+As it was expected in this challenge comparison function was fixed, and this time we will have to look through unlock code generation.
 
 Generation is based on "user ID", which isn't changing trough the board reset, so we just need to reverse user ID transformation to unlock key. Reimplementing transformation code using python and we have this tiny script:
 

@@ -39,6 +39,6 @@ During playing with pins I recalled that strange protocol from previous challeng
 
 By looking at picture above we can see that signal pairs of **0**,**6** and **1**,**3** are inverted, both of them when connected to D2 and D3 removes "frequency error". Meanwhile we can try to guess "IO active" among 3 candidates only signal **5** matches, that's good, going next. After several tries to find proper connection for D5 we discover, that only **0**,**6** signal pair match as "frequency" (pin D2,D3), and signal **1** matches "inverted IO welsh" on D5, in other case more errors appears. Few next tries revel that D6 responsible for "IO prepare" and signal **4** match it. Last left candidate - signal **2**, can be connected to D10 pin which successfully activate your "security module" and brings out your flag (for some reason signal **3** left unconnected).
 
-![phonic2](images/phonic2_1.jpg)
+![phonic2](images/phonic2_2.jpg)
 
 But challenge isn't over yet, you still have to complete next portion of google captchas waiting for you, while you'll be guessing was it **A** or **8**, maybe this time you will be more lucky))

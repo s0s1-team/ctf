@@ -16,7 +16,7 @@ Tasks:
 1. [Unauthorized](rhme3/unauthorized.md)
 1. [Bluetooth Device Manager](rhme3/bluetooth_manager.md)
 1. [Phonic Frenzy 1](rhme3/phonic1.md)
-1. Phonic Frenzy 2
+1. [Phonic Frenzy 2](rhme3/phonic2.md)
 1. [Car Crash](rhme3/car_crash.md)
 1. Full Compromise
 1. Climate Controller Catastrophe

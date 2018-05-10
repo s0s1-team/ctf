@@ -1,4 +1,4 @@
-## Phonic Frenzy 1 (100)
+## Phonic Frenzy 2 (200)
 
 ### Description
 

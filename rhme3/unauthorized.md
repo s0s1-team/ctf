@@ -15,9 +15,9 @@ Here we can see function which takes number as parameter and returns pointer, wi
 And among code in *malloc.c* we see one interesting comment:
 
 	* Thus, all possible stack frames of interrupt routines that could
- 	* interrupt the current function, plus all further nested function
- 	* calls must not require more stack space, or they'll risk to collide
- 	* with the data segment.
+	* interrupt the current function, plus all further nested function
+	* calls must not require more stack space, or they'll risk to collide
+	* with the data segment.
 
 Really?
 

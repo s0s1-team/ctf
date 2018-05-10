@@ -41,4 +41,4 @@ By looking at picture above we can see that signal pairs of **0**,**6** and **1*
 
 ![phonic2](images/phonic2_2.jpg)
 
-But challenge isn't over yet, you still have to complete next portion of google captchas waiting for you, while you'll be guessing was it **A** or **8**, maybe this time you will be more lucky))
+But challenge isn't over yet, you still have to complete next portion of google captchas waiting for you, while you'll be guessing was it **A** or **8**. Maybe this time you will be more lucky))

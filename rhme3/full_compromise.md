@@ -114,7 +114,7 @@ Things becomes more clear, we need to identify which sample is used by looking a
 
 First of all we need to know how test data is exposed, if you quickly identify that compiler was using division optimization through modular multiplication you will see that during running test 10 bits of test array is exposed. Leaked bits are least significant bit of randomly chosen 10 consequent bytes of test array.
 
-[signal]
+![compromise](images/compromise1.jpg)
 
 Next problem we have is to calculate test arrays for 1000 samples, it was obvious that Atmel Studio wouldn't fit for this, by looking other emulators I decided to try well known radare ESIL engine. After few days of suffering and looking other open source emulators I admitted that test array generation isn't so complicated, operations isn't so complicated and all we need to do just extract arguments from opcodes.
 

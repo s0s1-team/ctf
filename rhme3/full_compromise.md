@@ -12,8 +12,7 @@ At first we should convert all binaries from intel hex to raw binary, you can us
 
     arm-none-eabi-objcopy -I ihex --output-target=binary code00.hex code00.bin
 
-I'm always wanted to try *radiff2* tool in action and this was quite good time for this, but when I compared two binaries my result was far from expected(
-Next idea was that malicious code shoul bring sowe extra functions, and I decided to count **ret** opcode in all binaries, but all binaries had exactly same number of returns - 154. Ok maybe malicious code is injected directly inside of some function. I decided to roughly split samples on individual functions using **ret** opcode as separator, strip all absolute adresses from opcode and save it indivual subfolders:
+I'm always wanted to try *radiff2* tool in action and this was quite good time for this, but when I compared two binaries my result was far from expected(. Next idea was that malicious code should bring some extra functions, and I decided to count **ret** opcode in all binaries, but all binaries had exactly same number of returns - 154. Ok maybe malicious code is injected directly inside of some function. I decided to roughly split samples on individual functions using **ret** opcode as separator, strip all absolute addresses from opcode and save it individual subfolders:
 
 ```python
 def strip_args(f,data_start):
@@ -71,7 +70,7 @@ def separatefuncs():
         i.close()
 ```
 
-After that I automated *radiff2* compare process for individual funcion and saved results in csv file:
+After that I automated *radiff2* compare process for individual function and saved results in csv file:
 
 ```python
 def mesure(f1,f2):
@@ -99,27 +98,27 @@ def comp_radar(inp_path,out_file):
         fout.close()
 ```
 
-By looking to generated csv files we can see that only few subfunctions has differance:
+By looking to generated csv files we can see that only few subfunctions has difference:
  - sub0 - difference is in switch table of unused function and reset handler, so it's not interesting.
  - sub14 and sub25 (main) - difference is in *serial_print* function pointer and it also not interesting for us.
  - *sub8*, *sub18* and *sub19* is quite big functions and have a lot of differences among all samples.
 
-At this point it's clear that only 3 function is different, but where's malicious code, they all have significant diffierence?
-Ok let's have a detailed look inside of sample, we can choose anyone, at least we know which function is shared among all them.
+At this point it's clear that only 3 function is different, but where's malicious code, they all have significant difference?
+Ok let's have a detailed look inside of sample, we can choose any, since we know which functions are common.
 
-By looking through firmware we can see that DAC module and timer interrupt is set during init, after init phase input is avaiting and two branches is availabe: "test mode" and "secret management mode". For "test mode" *sub18* and *sub19* is used to calculate test array, chosen bits of test array is transmitted as analog signal on D7-D8 pins. "Secret mangment mode" use *sub8* for password generation (250 bytes), when user input asterics char system falls in exotic password input mode: password byte value is incremented by entering of any byte to serial interface and different bytes is entered by syncing input with counter overflow. Next interesting thing is that password verification is using "heavy" operations and takes about ~4 hours.
+By looking through firmware we can see that DAC module and timer interrupt is set during init, after init phase input is awaiting and two branches is availabe: "test mode" and "secret management mode". For "test mode" *sub18* and *sub19* is used to calculate test array, chosen bits of test array is transmitted as analog signal on D7-D8 pins. "Secret managment mode" use *sub8* for password generation (250 bytes), when user input asterisk char system falls in exotic password input mode: password byte value is incremented by entering of any byte to serial interface and different bytes is entered by syncing input with counter overflow. Next interesting thing is that password verification is using "heavy" operations and takes about ~4 hours.
 
 But wait, where is malicious code? So someone just forgot his backdoor password and we need to find it, damn stop always blame hackers in your insecurity)
 
 Things becomes more clear, we need to identify which sample is used by looking analog signal during "test" command, calculate password for located sample and pass verification to "secret management mode", sounds easy, easier than it is)
 
-First of all we need to know how test data is exposed, if you quickly identify that compiler was using division optimisation throu modular multiplication you will see that during running test 10 bits of test array is exposed. Leaked bits are least significant bit of randomly chosen 10 consequent bytes of test array.
+First of all we need to know how test data is exposed, if you quickly identify that compiler was using division optimization through modular multiplication you will see that during running test 10 bits of test array is exposed. Leaked bits are least significant bit of randomly chosen 10 consequent bytes of test array.
 
 [signal]
 
-Next problem we have is to calculate test arrays for 1000 samples, it was obvious that Atmel Studion isn't able to handle this, by looking other emulators I dicided to try well known radare ESIL engine. After few days suffering and looking other open source emulators I admited that test array generation isn't so complicated, operations isn't so complicated and all we need to do just extract arguments from opcodes.
+Next problem we have is to calculate test arrays for 1000 samples, it was obvious that Atmel Studio wouldn't fit for this, by looking other emulators I decided to try well known radare ESIL engine. After few days of suffering and looking other open source emulators I admitted that test array generation isn't so complicated, operations isn't so complicated and all we need to do just extract arguments from opcodes.
 
-Few hours of coding and we have this two function that extracts all that we need:
+Few hours of coding and testing gave me this script that extracts all needed data:
 
 ```python
 def get_test_array1(f):
@@ -249,8 +248,8 @@ def save_test_array():
 ```
 
 
-Next we are getting armed with oscilloscope write down 5 bitvectors from test mode and filter our results using script, this should be sufficiently enough to locate which sample is running on your board. After that you can calculate right password for running firmware, for this purpuse Atmel Studio would more then enough, few patches to firmware and setting breakpoint after password calculation, when it hits breakpoint just copy calculated pass to final script.
+Next we are getting armed with oscilloscope write down 5 bitvectors from test mode and filter our results using script, this should be sufficiently enough to locate which sample is running on your board. After that you can calculate right password for running firmware, for this purpose Atmel Studio would more than enough, few patches to firmware and setting breakpoint after password calculation, when it hits breakpoint just copy calculated pass to final script.
 
-Last thing left is to run final script for password verification, don't forget to check that printed pass is matching expecatation, or you will be quite supprised in the end, if everything is fine you have ~4 hours of "free time").
+Last thing left is to run final script for password verification, don't forget to check that printed pass is matching expectation, or you will be quite surprised after few hours of calculation. If everything is going as expeted and nobody is going to accidantly switch of your usb cable you'll have about 4 hours of "free time").
 
-I'm still wonder why Car Crash cost 500 points, and all this stuff above just 250 point, but anyway congratulations if get throug it.
+I'm still wonder why Car Crash cost 500 points, and all this stuff above just 250 point, but if could do it my congratulation.

@@ -27,7 +27,7 @@ stack_endl_off=0x157*2
 stack_endh_off=0x152*2
 entry_offset=0x15b*2
 
-def addr_from_opc(opc):
+def arg_from_opc(opc):
     return ((opc&0xF00)>>4|(opc&0xF))
 
 def to_shrt(inp):
@@ -36,9 +36,9 @@ def to_shrt(inp):
 def read_addr(f,offl,offh):
     #print hex(offl), hex(offh)
     f.seek(offl)
-    dl=addr_from_opc(to_shrt(f.read(2)))
+    dl=arg_from_opc(to_shrt(f.read(2)))
     f.seek(offh)
-    dh=addr_from_opc(to_shrt(f.read(2)))
+    dh=arg_from_opc(to_shrt(f.read(2)))
     return (dh<<8)|dl
 
 def read_fw(f):
@@ -260,16 +260,16 @@ def get_test_array1(f):
     fd.read(2)
     array1=[]
     for i in range(100):
-        array1.append(5)
+        array1.append(5) # memset 5
     array2=[]
-    for i in range(100):
-        fd.read(4)
+    for i in range(100): #first array operation
+        fd.read(4) #skip opcode
         opc=to_shrt(fd.read(2))
         c=0xdeadbeef
-        if opc&0xF0F0==0x5080:
-            c=addr_from_opc(opc)
+        if opc&0xF0F0==0x5080:  # SUBI
+            c=arg_from_opc(opc) #const from argument
             fd.read(4)
-        elif opc==0x9380:   #nothing
+        elif opc==0x9380:   # optimised, no operation
             c=0
             fd.read(2)
         else:
@@ -279,18 +279,18 @@ def get_test_array1(f):
         array1[100-i-1]-=c
         if array1[100-i-1]<0:
             array1[100-i-1]+=0x100
-    for i in range(100):
+    for i in range(100): #second array operation
         fd.read(4)
         opc=to_shrt(fd.read(2))
         c=0xbeefdead
         #print hex(0x63-i), hex(opc)
-        if opc&0xF0F0==0xE080:#ldi
-            c=addr_from_opc(opc)
+        if opc&0xF0F0==0xE080: # LDI
+            c=arg_from_opc(opc)
             fd.read(6)
-        elif opc==0x9380:   #nothing
+        elif opc==0x9380:   # optimised, no operation
             c=0
             fd.read(2)
-        elif opc&0xF0F0==0x9080: #com
+        elif opc&0xF0F0==0x9080: # COM
             c=0xFF
             fd.read(4)        
         else:
@@ -302,6 +302,7 @@ def get_test_array1(f):
     out=[]
     for i in range(100):
         out.append(array1[i]^array2[i])
+    fd.close()
     return (array1,array2,out)
 
 def get_test_array2(f,in_arr):
@@ -316,15 +317,15 @@ def get_test_array2(f,in_arr):
         fd.read(4)
         opc=to_shrt(fd.read(2))
         c=0xdeadbeef
-        if opc&0xD2F8==0x8098: #Y+c
+        if opc&0xD2F8==0x8098: # Y+c
             c=((opc&7)|((opc&0xC00)>>7)|((opc&0x2000)>>8))-1
             fd.read(6)            
-        elif opc==0x01CE:   #subi
+        elif opc==0x01CE:   # SUBI
             opc=to_shrt(fd.read(2))
             if (opc&0xF0F0!=0x5080):
                 print i,hex(opc), "fix needed",hex(fd.tell()/2)
                 return
-            c=0x100-addr_from_opc(opc)-1
+            c=0x100-arg_from_opc(opc)-1
             fd.read(12)
         else:
             print "opc error", hex(opc),hex(fd.tell()/2)
@@ -333,19 +334,21 @@ def get_test_array2(f,in_arr):
             print "error offset",c
             return
         out_arr[100-i-1]^=in_arr[c]
+
+    tst_array_base=0x2a6b
     for i in range(100):
         opc=to_shrt(fd.read(2))
-        if opc==0x9190:
-            off1=to_shrt(fd.read(2))-0x2a6b
+        if opc==0x9190: # lds   
+            off1=to_shrt(fd.read(2))-tst_array_base
             fd.read(2)
-            off2=to_shrt(fd.read(2))-0x2a6b
+            off2=to_shrt(fd.read(2))-tst_array_base
             if off1!=100-i-1 or off2>=100:
                 print hex(100-i-1),"offset mism", hex(off1),hex(fd.tell()/2)
                 return        
             fd.read(6)
             out_arr[off1]^=out_arr[off2]
-        elif opc==0x9210:
-            off1=to_shrt(fd.read(2))-0x2a6b
+        elif opc==0x9210: #     lds r18
+            off1=to_shrt(fd.read(2))-tst_array_base
             if off1!=100-i-1:
                 print hex(100-i-1),"offset mism", hex(off1),hex(fd.tell()/2)
                 return
@@ -356,6 +359,7 @@ def get_test_array2(f,in_arr):
         print "end opcode mism"
         return
 
+    fd.close()
     return out_arr
 
 def save_test_array():
@@ -365,14 +369,10 @@ def save_test_array():
         break
 
     for fl in f:
-        print fl
         tst1=get_test_array1(func_path+"/sub19/"+fl)
         tst2=get_test_array2(func_path+"/sub18/"+fl,tst1[2])
-        #print tst
+        
         fout=open(tst_path+"/"+fl,"wb")
-        #fout.write(bytearray(tst1[0]))
-        #fout.write(bytearray(tst1[1]))
-        #fout.write(bytearray(tst1[2]))
         fout.write(bytearray(tst2))
         fout.close()
 
@@ -386,7 +386,6 @@ def check_test(f,num):
             if str(ord(buff[(i+j)%100])&1)!=testvectors[num][j]:
                 break
             if j==9:
-               print num, f, "matches"
                return True
     return False
 
@@ -398,33 +397,29 @@ def find_match():
 
     matched_1=[]
     for fl in f:
-        if check_test(tst_path+"/"+fl,1):
+        if check_test(tst_path+"/"+fl,0):
             matched_1.append(fl)
     matched_2=[]
     for fl in matched_1:
-        if check_test(tst_path+"/"+fl,3):
+        if check_test(tst_path+"/"+fl,2):
             matched_2.append(fl)
     matched_3=[]
     for fl in matched_2:
         if check_test(tst_path+"/"+fl,5):
             matched_3.append(fl)
+    print matched_3
 
         
         
     
-#strip_args_from_files(bins_path)
-#separatefuncs()
-for i in range(NUM_FUNC):
-    if os.path.exists("funcs/sub"+str(i)):
-        comp_radar("funcs/sub"+str(i),"funcs/sub"+str(i)+".csv")
+strip_args_from_files(bins_path)
+separatefuncs()
+#for i in range(NUM_FUNC):
+#    if os.path.exists("funcs/sub"+str(i)):
+#        comp_radar("funcs/sub"+str(i),"funcs/sub"+str(i)+".csv")
 
 #sampl_calls=read_sampl_calls()
 #comp_calls(sampl_calls)
 
-#save_test_array()
-#arr=get_test_array1("funcs/sub19/sample0.hex.bin.stripped")
-#find_match()
-
-
-
-        
+save_test_array()
+find_match()

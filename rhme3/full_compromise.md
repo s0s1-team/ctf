@@ -252,4 +252,6 @@ Next we are getting armed with oscilloscope write down 5 bitvectors from test mo
 
 Last thing left is to run final script for password verification, don't forget to check that printed pass is matching expectation, or you will be quite surprised after few hours of calculation. If everything is going as expeted and nobody is going to accidantly switch of your usb cable you'll have about 4 hours of "free time").
 
+Full script can be found among files in github repository.
+
 I'm still wonder why Car Crash cost 500 points, and all this stuff above just 250 point, but if could do it my congratulation.

@@ -19,7 +19,7 @@ Tasks:
 1. [Phonic Frenzy 2](rhme3/phonic2.md)
 1. [Car Crash](rhme3/car_crash.md)
 1. [Full Compromise](rhme3/full_compromise.md)
-1. Climate Controller Catastrophe
+1. [Climate Controller Catastrophe](rhme3/climat_controller.md)
 1. [Car Key Fob hardware backdoor](rhme3/car_key_fob_hardware.md)
 1. [CAN Opener](rhme3/can_opener.md)
 1. Back to the Future

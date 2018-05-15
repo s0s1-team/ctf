@@ -50,6 +50,7 @@ def gen_cert(rop_payload):
 ```
 
 Before printing the flag there is additional masking which we need to turn off, for this purpose we can use such rop gadgets:
+
     ROM:4C68    ser     r24
     ROM:4C69    pop     r0
     ROM:4C6A    pop     r29

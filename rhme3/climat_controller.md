@@ -82,6 +82,7 @@ Before printing the flag there is additional masking which we need to turn off, 
 
 NOTE: Return pointers on XMEGA is stored as 3 bytes in Big Endian.
 
+Full script can be found among files in github repository.
 If everything is correct you will see your flag after "Initializing" message:
 
 ![climat](images/climat1.png)

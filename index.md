@@ -26,4 +26,4 @@ Tasks:
 1. Auto-psy
 1. Benzinegate
 1. [It's a Kind of Magic](rhme3/its_a_kind_of_magic.md)
-1. The Imposters
+1. [The Imposters](rhme3/theimposters.md)

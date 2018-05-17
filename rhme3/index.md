@@ -1,6 +1,4 @@
-# CTFs
-
-## [RHME3](https://rhme.riscure.com/3/challenges)
+# [RHME3](https://rhme.riscure.com/3/challenges)
 
 RHme3 is the world’s first automotive CTF created together by Riscure and Argus Cyber Security.
 

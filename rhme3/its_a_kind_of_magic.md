@@ -32,3 +32,5 @@ Our plan for the attack consisted of 3 steps:
 1. And the last step is to calculate AES key from `round_2_key`.
 
 Following the plan resulted in a valid AES key.
+
+Just for fun the attack was implemented in JlSca library: SCA library for Julia developed by Riscure. See [rhme3-itskindofmagic.ipynb](https://github.com/s0s1-team/ctf/tree/master/rhme3/itskindofmagic/rhme3-itskindofmagic.ipynb).

@@ -1,0 +1,27 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+$header-bg-color: #061208;
+$header-bg-color-secondary: #041003;
+
+.page-header {
+    color: $header-heading-color;
+    text-align: center;
+    background-color: $header-bg-color;
+    background: url("{{ site.baseurl }}/assets/logo.png") center no-repeat, linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);
+    background-size: contain, auto;
+
+    @include large {
+        padding: 5rem 6rem;
+    }
+
+    @include medium {
+        padding: 3rem 4rem;
+    }
+
+    @include small {
+        padding: 2rem 1rem;
+    }
+}

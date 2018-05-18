@@ -15,7 +15,7 @@ Challenge developed by Argus Cyber Security.
 
 This task similar to CAN Opener challenge with same dashboard app, CAN traffic has same messages, except two new message type added (id 0x19A and 0x12).
 
-![can](images/back2.jpg)
+![can](images/back2.JPG)
 
 ![flag](images/back1.png)
 

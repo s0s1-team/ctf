@@ -24,7 +24,7 @@ Accidentally using 16 `\x00` as plaintext we saw that one of _block_ didn't had 
 We repeated the AddRoundKey with resulted ciphertext and found out that ciphertext was at the end of the same _block_. The distance between plaintext and ciphertext leakages was only several hundred samples (initially we captured at 32MHz).
 
 Reading different articles on the topic we stumbled at
-https://wiki.newae.com/Tutorial_A6_Replication_of_Ilya_Kizhvatov%27s_XMEGA%C2%AE_Attack article. It looked very similar to what we had here. So the _block_ structure became clear. 15 _blocks_ are imposters and only 1 _block_ processes real plaintext. It doesn't use masking or other countermeasures, it only uses XMEGA's hardware AES encryption.
+<https://wiki.newae.com/Tutorial_A6_Replication_of_Ilya_Kizhvatov%27s_XMEGA%C2%AE_Attack> article. It looked very similar to what we had here. So the _block_ structure became clear. 15 _blocks_ are imposters and only 1 _block_ processes real plaintext. It doesn't use masking or other countermeasures, it only uses XMEGA's hardware AES encryption.
 
 ![](images/theimposters4.png)
 

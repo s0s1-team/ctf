@@ -17,5 +17,5 @@ This task similar to CAN Opener challenge with same dashboard app, CAN traffic h
 
 ![can](images/back2.jpg)
 
-![flag](images/back1.jpg)
+![flag](images/back1.png)
 

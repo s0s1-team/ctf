@@ -2,9 +2,9 @@
 
 RHme3 is the world’s first automotive CTF created together by Riscure and Argus Cyber Security.
 
-One of our boards was [modified](rhme3/hw.md) for side channel analysis and fault injection tasks.
+One of our boards was [modified](hw.md) for side channel analysis and fault injection tasks.
 
-There were a decent number of RE tasks and here some [RE hints](rhme3/rehints.md).
+There were a decent number of RE tasks and here some [RE hints](rehints.md).
 
 Tasks:
 

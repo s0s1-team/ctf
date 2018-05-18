@@ -1,4 +1,4 @@
-## Phonic Frenzy 1 (100)
+## Back to the future (250)
 
 ### Description
 
@@ -13,7 +13,7 @@ Challenge developed by Argus Cyber Security.
 
 ### Write-up
 
-This task similar to CAN Opener challenge with same dashboard app, can traffic has same messages, except two new message type added (id 0x19A and 0x12).
+This task similar to CAN Opener challenge with same dashboard app, CAN traffic has same messages, except two new message type added (id 0x19A and 0x12).
 
 ![can](images/back2.jpg)
 

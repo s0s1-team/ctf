@@ -29,7 +29,7 @@ But before starting continuous hitting board with power glitches is good idea to
 
 ![fail](images/benzin4.png)
 
-As it was mentioned, when stack cookie is incorrect firmware jumps to infinitive loop, you can you CW manual trigger to exit loop and jump to next instruction (used glitch parameters 48% pulse with, -5% period offset and 6 repeats). Exiting loop also gives the ability to check ROP payload and allows print masked flag.
+As it was mentioned, when stack cookie is incorrect firmware jumps to infinitive loop, you can you CW manual trigger to exit loop and jump to next instruction (used glitch parameters 48% pulse with, -5% period offset and 5 repeats). Exiting loop also gives the ability to check ROP payload and allows print masked flag.
 
 When I was playing with ROP payload I could successfully taking controll of execution and print masked flag with *flag_print()* (0x2ba) function, but when I was adding *flag_precalc()* (0xb62) to ROP chain board was resetting, was looking like address isn't correct, was that another bug?
 
